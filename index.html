@@ -1,31 +1,236 @@
-<!DOCTYPE html> 
-<html lang="en"> <!-- Mendefinisikan bahasa dokumen sebagai bahasa Inggris -->
+<!DOCTYPE html>
+<html lang="id">
 <head>
-    <meta charset="UTF-8"> <!-- Mengatur karakter encoding ke UTF-8 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Mengatur viewport agar responsif di perangkat mobile -->
-    <title>Windy Rani G Sitompul</title> <!-- Judul halaman website -->
-    <link rel="stylesheet" href="style.css"> <!-- Menghubungkan file CSS eksternal -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sensor dan Aktuator Reading</title>
+    <style>
+        /* Body style dengan latar belakang yang cerah */
+        body {
+            background-color: #f9f6f7;
+            font-family: 'Comic Sans MS', cursive, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            color: #333;
+        }
+
+        /* Header dengan latar belakang yang lebih cerah */
+        .data-head {
+            width: 80%;
+            margin: 30px auto;
+            font-size: 36px;
+            font-weight: bold;
+            padding: 15px;
+            background: linear-gradient(135deg, #f78f56, #f92b7f);
+            color: #ffffff;
+            border-radius: 30px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Kontainer untuk data sensor dengan layout grid yang lebih playful */
+        .data-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 20px auto;
+            width: 80%;
+        }
+
+        /* Card data item dengan animasi hover dan border yang lucu */
+        .data-item {
+            background: #ffebcd;
+            padding: 20px;
+            width: 220px;
+            border-radius: 15px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+            font-size: 22px;
+            border: 3px dashed #ff6347;
+        }
+
+        .data-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 15px rgba(255, 105, 180, 0.5);
+        }
+
+        .data-item h2 {
+            font-size: 24px;
+            color: #ff6347;
+        }
+
+        .data-item p {
+            font-size: 36px;
+            font-weight: bold;
+            color: #00ffcc;
+        }
+
+        /* Indikator LED dengan efek animasi yang menyenangkan */
+        .led-indicator {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 20px auto;
+            background-color: #dcdcdc;
+            box-shadow: 0 0 20px rgba(255, 105, 180, 0.6);
+            transition: background-color 0.5s ease;
+        }
+
+        /* Riwayat data dengan desain yang lebih cerah dan playful */
+        .history-container {
+            width: 80%;
+            margin: 30px auto;
+            background: #ffe4e1;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            color: #333;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: center;
+            border-bottom: 1px solid #f78f56;
+        }
+
+        th {
+            background: #ff6347;
+            color: #fff;
+        }
+
+        tr:nth-child(even) {
+            background: #ffebcd;
+        }
+
+        tr:nth-child(odd) {
+            background: #fff5e1;
+        }
+
+        /* Animasi loading saat menunggu data */
+        .loading {
+            font-size: 24px;
+            color: #ff6347;
+            font-weight: bold;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% {
+                opacity: 0;
+            }
+        }
+
+    </style>
 </head>
 <body>
-    <!-- judul praktikum -->
-    <h1 style="color: brown;"><b>praktikum PWIOT</b></h1> <!-- Menampilkan judul utama halaman dengan warna coklat -->
 
-    <!-- spasi paragraf -->
-    <br> <!-- Memberikan satu baris kosong di halaman -->
+    <div class="data-head">DHT22 Sensor & LED Status</div>
 
-    <!-- teks paragraf dengan format tebal dan font khusus -->
-    <b style="font-family: Georgia, 'Times New Roman', Times, serif;">Selamat datang di Website Windy</b> <!-- Menampilkan teks dengan font tertentu dan tebal -->
+    <div class="data-container">
+        <div class="data-item" onclick="showHistory('temperature')">
+            <h2>Temperature</h2>
+            <p id="temperature">-- &#8451;</p>
+        </div>
+        <div class="data-item" onclick="showHistory('humidity')">
+            <h2>Humidity</h2>
+            <p id="humidity">--%</p>
+        </div>
+    </div>
 
-    <!-- teks paragraf -->
-    <p>windy</p> <!-- Menampilkan teks "windy" dalam paragraf -->
+    <h2>Status LED</h2>
+    <div class="led-indicator" id="ledColor"></div>
 
-    <!-- link pertama -->
-    <a href="https://youtu.be/jDxPud-QiDk?si=OZlcjKbsmXy1rGT9">winn</a> <!-- Tautan menuju YouTube dengan teks "winn" -->
+    <div class="history-container">
+        <h2>Riwayat Data Sensor</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Sensor</th>
+                    <th>Nilai</th>
+                    <th>Waktu</th>
+                </tr>
+            </thead>
+            <tbody id="historyTable">
+                <tr><td colspan="3" class="loading">Loading...</td></tr>
+            </tbody>
+        </table>
+    </div>
 
-    <!-- link kedua -->
-    <a href="https://sl.bing.net/qxXWSEFfiu">dyy</a> <!-- Tautan menuju Bing dengan teks "dyy" -->
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.6.8/firebase-database.js"></script>
 
-    <!-- gambar -->
-    <img src="Gambar-kucing-11.JPG" alt="Gambar Kucing"> <!-- Menampilkan gambar dengan nama file "Gambar-kucing-11.JPG" dan menambahkan atribut alt -->
+    <script>
+        // Konfigurasi Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCoVNogqBSyonijksrgFVVAPC1FbtJ3Acw",
+    authDomain: "windy-pwiot.firebaseapp.com",
+    databaseURL: "https://windy-pwiot-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "windy-pwiot",
+    storageBucket: "windy-pwiot.firebasestorage.app",
+    messagingSenderId: "1050999905670",
+    appId: "1:1050999905670:web:cebd79e9be874e81282007",
+    measurementId: "G-X64DWG7CGB"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        var database = firebase.database();
+
+        var dataRefTemperature = database.ref('sensor_value/dht22_temperature');
+        var dataRefHumidity = database.ref('sensor_value/dht22_humidity');
+        var dataRefLed = database.ref('sensor_value/led_status');
+
+        function getCurrentTime() {
+            let now = new Date();
+            return now.getHours() + ":" + now.getMinutes() + ":" + now.getSeconds();
+        }
+
+        function addHistory(sensor, value) {
+            let table = document.getElementById('historyTable');
+            let newRow = table.insertRow(1);
+            newRow.innerHTML = `<td>${sensor}</td><td>${value}</td><td>${getCurrentTime()}</td>`;
+        }
+
+        // Mendapatkan nilai temperatur dari Firebase
+        dataRefTemperature.on('value', function(snapshot) {
+            let temp = snapshot.val();
+            document.getElementById('temperature').innerHTML = temp + " &#8451;";
+            addHistory('Temperature', temp + " &#8451;");
+        });
+
+        // Mendapatkan nilai kelembapan dari Firebase
+        dataRefHumidity.on('value', function(snapshot) {
+            let humi = snapshot.val();
+            document.getElementById('humidity').innerHTML = humi + "%";
+            addHistory('Humidity', humi + "%");
+        });
+
+        // Mendapatkan status LED dari Firebase
+        dataRefLed.on('value', function(snapshot) {
+            let ledStatus = snapshot.val();
+            let ledColorDiv = document.getElementById('ledColor');
+
+            // Menyesuaikan warna LED berdasarkan status
+            if (ledStatus === "Green") {
+                ledColorDiv.style.backgroundColor = "green";
+            } else if (ledStatus === "Yellow") {
+                ledColorDiv.style.backgroundColor = "yellow";
+            } else if (ledStatus === "Red") {
+                ledColorDiv.style.backgroundColor = "red";
+            }
+        });
+
+        function showHistory(sensor) {
+            alert("Riwayat data " + sensor + " tersedia di tabel di bawah.");
+        }
+    </script>
+
 </body>
-</html>
+</html>  SELAMAT DATANG DI WEB WINDY RANI G 
